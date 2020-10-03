@@ -4,54 +4,40 @@ import sys  # In order to terminate the program
 
 
 # import from http://128.238.251.26:6789/HelloWorld.html
-def main():
-    serverPort = 9876
-    serverSocket = socket(AF_INET, SOCK_STREAM)
-    
-    # Prepare a sever socket
-    serverSocket.bind(('', serverPort))
-    serverSocket.listen(1)
 
-    print('The webserver is now on port: ', serverPort)
-    while True:
-        # Establish the connection
-        print('Ready to serve...')
-        connectionSocket, addr = serverSocket.accept()
-        print('... before Try ...')
-        
-        try:
-            print('... inside Try ...')
-            message = connectionSocket.recv(1024)
-            print(message, '::', message.split()[0], ':', message.split()[1])
-            filename = message.split()[1]
-            print(filename, ' ::', filename[1:])
-            f = open(filename[1:])
-            outputdata = f.read()
-            print('Outputdata: ', outputdata)
+serverPort = 6789
+serverHost = '127.0.0.1'
+serverSocket = socket(AF_INET, SOCK_STREAM)
 
-            connectionSocket.send('\nHTTP/1.1 200 OK\n\n')
-            connectionSocket.send(outputdata)
-            connectionSocket.close()
-            serverSocket.close()
-            sys.exit()  # Terminate the program after sending the corresponding data
+# Prepare a sever socket
+serverSocket.bind((serverHost, serverPort))
+serverSocket.listen()
 
-        except IOError:
-            pass
+print('The webserver is now on port: ', serverPort)
+while True:
+    # Establish the connection
+    print('Ready to serve...')
+    connectionSocket, addr = serverSocket.accept()
+    print('... before Try ...')
 
-            print("404 Not Found")
-            connectionSocket.send('\HTTP/1.1 404 Not Found\n\n')
+    try:
+        print('... inside Try ...')
+        message = connectionSocket.recv(1024)
+        print(message, '::', message.split()[0], ':', message.split()[1])
+        filename = message.split()[1]
+        print(filename, ' ::', filename[1:])
+        f = open(filename[1:])
+        outputdata = f.read()
+        connectionSocket.send(bytes('HTTP/1.1 200 OK', 'UTF-8'))
+        for i in range(0, len(outputdata)):
+            connectionSocket.send(outputdata[i].encode())
+        connectionSocket.send("\r\n".encode())
+        connectionSocket.close()
+    except IOError:
+        connectionSocket.send(bytes('HTTP/1.1 404 Not Found', 'UTF-8'))
+        print("404 Not Found")
+        connectionSocket.close()
 
-        break
-
-
-    pass
-# Send response message for file not found
-# Fill in start
-# Fill in end
-# Close client socket
-# Fill in start
-# Fill in end
-
-
-if __name__ == '__main__':
-    main()
+    break
+serverSocket.close()
+sys.exit()  # Terminate the program after sending the corresponding data
