@@ -38,7 +38,9 @@ def main():
             connectionSocket.close()
 
         except IOError:
-            connectionSocket.send(bytes('HTTP/1.1 404 Not Found', 'UTF-8'))
+            #send 404 ERROR to client 
+            connectionSocket.send(b"HTTP/1.1 404 Not Found\r\n\r\n")
+            connectionSocket.send(b"<html><head></head><body><h1>404 Not Found</h1></body></html>\r\n")
             print("404 Not Found")
 
             connectionSocket.close()
