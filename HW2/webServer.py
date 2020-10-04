@@ -2,8 +2,6 @@
 from socket import *
 import sys  # In order to terminate the program
 
-
-# import from http://128.238.251.26:6789/HelloWorld.html
 def main():
     serverPort = 6789
     serverHost = '127.0.0.1'
