@@ -18,24 +18,23 @@ def main():
         # Establish the connection
         print('Ready to serve...')
         connectionSocket, addr = serverSocket.accept()
-        print('... before Try ...')
-
         try:
-            print('... inside Try ...')
             message = connectionSocket.recv(1024)
-            #print(message, '::', message.split()[0], ':', message.split()[1])
+            print(message)
             filename = message.split()[1]
-            #print(filename, ' ::', filename[1:])
+            print(filename)
             f = open(filename[1:])
             outputdata = f.read()
-
+            print("output data: ", outputdata)
+            # Send the HTTP response header line to the connection socket
             connectionSocket.send(bytes('HTTP/1.1 200 OK', 'UTF-8'))
 
             # Send the content of the requested file to the client
+            print("Sending file to client\n")
             for i in range(0, len(outputdata)):
-                connectionSocket.send(outputdata[i].encode())
+                connectionSocket.send(outputdata[i].encode('utf-8'))
             connectionSocket.send("\r\n".encode())
-
+            print("... socket now closing ...\n")
             connectionSocket.close()
 
         except IOError:
@@ -44,8 +43,8 @@ def main():
 
             connectionSocket.close()
 
-        serverSocket.close()
-        sys.exit()  # Terminate the program after sending the corresponding data
+    serverSocket.close()
+    sys.exit()  # Terminate the program after sending the corresponding data
 
 if __name__ == "__main__":
     main()
