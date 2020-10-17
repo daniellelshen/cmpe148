@@ -6,24 +6,24 @@ import time
 
 
 def main():
-
     msg = "\r\n  CMPE 148 Lab 3: I love computer networks!"
     endmsg = "\r\n.\r\n"
-    # Choose a mail server (e.g. Google mail server) and call it mailserver
+
+    # Choose a mail server and call it mailserver
     mailserver = ("smtp.gmail.com", 587)  # Fill in start #Fill in end
 
     # Create socket called clientSocket and establish a TCP connection with mailserver
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect(mailserver)
 
-
     recv = clientSocket.recv(1024)
     recv = recv.decode()
     print("Message after connection request:" + recv)
     if recv[:3] != '220':
         print('220 reply not received from server.')
+
     # Send HELO command and print server response.
-    heloCommand = 'EHLO Microsoft\r\n'
+    heloCommand = 'HELO ME\r\n'
     clientSocket.send(heloCommand.encode())
     recv1 = clientSocket.recv(1024)
     recv1 = recv1.decode()
@@ -43,7 +43,7 @@ def main():
     print("Message after EHLO command:" + recv1)
 
     # Info for username and password
-    # Authortization
+    # Gmail Authortization
     username = input("Please enter your gmail: ")
     password = input("Please enter password: ")
     base64_str = ("\x00" + username + "\x00" + password).encode()
